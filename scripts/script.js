@@ -4,15 +4,27 @@ const fetchingData = async () => {
       throw new Error('HTTP error');
     }
     const responseData = await response.json();
-    console.log(responseData[0])
+    console.log(responseData[0]);
     return responseData[0];
   };
   
-  fetchingData().then(word => {
+  function resetGame() {
+    const buttonsContainer = document.querySelector('.buttons-container');
+    const appearLetter = document.querySelector('.appear-letter');
+    buttonsContainer.innerHTML = '';
+    appearLetter.innerHTML = '';
+    fetchingData().then(word => {
+      playGame(word);
+    });
+  }
+  
+  function playGame(word) {
     const buttonsContainer = document.querySelector('.buttons-container');
     const appearLetter = document.querySelector('.appear-letter');
     const matchedLetters = Array(word.length).fill('_');
-  
+    const remainingRendered = document.querySelector('.remaining');
+    let remainingRights = 10;
+    remainingRendered.innerText = `You have ${remainingRights} rights`;
     appearLetter.innerText = matchedLetters.join(' ');
   
     for (let i = 0; i < 26; i++) {
@@ -31,10 +43,43 @@ const fetchingData = async () => {
           }
   
           appearLetter.innerText = matchedLetters.join(' ');
+  
+          if (!matchedLetters.includes('_')) {
+            appearLetter.innerText = 'Congrats! You win!';
+            buttonsContainer.querySelectorAll('button').forEach(button => {
+              button.disabled = true;
+            });
+            showPlayAgainButton();
+          }
+          
+          button.disabled = true; // Disable the button
+  
+        } else {
+          remainingRights--;
+          remainingRendered.innerText = `You have ${remainingRights} rights`;
+  
+          if (remainingRights === 0) {
+            appearLetter.innerText = 'GAME OVER!!';
+            buttonsContainer.querySelectorAll('button').forEach(button => {
+              button.disabled = true;
+            });
+            showPlayAgainButton();
+          }
         }
       });
       buttonsContainer.appendChild(button);
     }
-  });
+  }
   
+  function showPlayAgainButton() {
+    const playAgainButton = document.createElement('button');
+    const playAgain = document.querySelector('.play-again');
+    playAgainButton.innerText = 'Play Again';
+    playAgainButton.addEventListener('click', resetGame);
+    playAgain.appendChild(playAgainButton);
+  }
+  
+  fetchingData().then(word => {
+    playGame(word);
+  });
   

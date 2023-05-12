@@ -99,7 +99,6 @@ const fetchingData = async () => {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.beginPath();
   }
-  
   function playGame(word) {
     const buttonsContainer = document.querySelector('.buttons-container');
     const appearLetter = document.querySelector('.appear-letter');
@@ -110,54 +109,60 @@ const fetchingData = async () => {
     appearLetter.innerText = matchedLetters.join(' ');
   
     function handleWrongGuess() {
-        remainingRights--;
-        remainingRendered.innerText = remainingRights;
-    
-        if (remainingRights === 0) {
-          appearLetter.innerText = 'GAME OVER!!';
-          buttonsContainer.querySelectorAll('button').forEach(button => {
-            button.disabled = true;
-          });
-          showPlayAgainButton();
-          drawHangman(8); // Draw complete hangman
-        } else {
-          drawHangman(10 - remainingRights); // Draw corresponding hangman part
-        }
+      remainingRights--;
+      remainingRendered.innerText = remainingRights;
+  
+      if (remainingRights === 0) {
+        appearLetter.innerText = 'GAME OVER!!';
+        buttonsContainer.querySelectorAll('button').forEach(button => {
+          button.disabled = true;
+        });
+        showPlayAgainButton();
+        drawHangman(8); // Draw complete hangman
+      } else {
+        drawHangman(10 - remainingRights); // Draw corresponding hangman part
       }
-    
-      for (let i = 0; i < 26; i++) {
+    }
+  
+    for (let i = 0; i < 26; i++) {
         let button = document.createElement('button');
         let letter = String.fromCharCode(65 + i);
         button.innerText = letter;
-        button.addEventListener('click', function () {
-          const lowerWord = word.toLowerCase();
-          const lowerLetter = letter.toLowerCase();
-    
-          if (lowerWord.includes(lowerLetter)) {
-            for (let j = 0; j < lowerWord.length; j++) {
-              if (lowerWord[j] === lowerLetter) {
-                matchedLetters[j] = word[j];
+        button.addEventListener('click', () => {
+            const lowerWord = word.toLowerCase();
+            const lowerLetter = letter.toLowerCase();
+          
+            if (lowerWord.includes(lowerLetter)) {
+              for (let j = 0; j < lowerWord.length; j++) {
+                if (lowerWord[j] === lowerLetter) {
+                  matchedLetters[j] = word[j];
+                }
               }
+          
+              appearLetter.innerText = matchedLetters.join(' ');
+          
+              if (!matchedLetters.includes('_')) {
+                appearLetter.innerText = 'Congrats! You win!';
+                disableButtons();
+                showPlayAgainButton();
+              }
+              
+              // Disable the clicked button
+              button.disabled = true;
+            } else {
+              handleWrongGuess();
             }
-    
-            appearLetter.innerText = matchedLetters.join(' ');
-    
-            if (!matchedLetters.includes('_')) {
-              appearLetter.innerText = 'Congrats! You win!';
-              buttonsContainer.querySelectorAll('button').forEach(button => {
-                button.disabled = true;
-              });
-              showPlayAgainButton();
-            }
-          } else {
-            handleWrongGuess();
-            this.disabled = true; // Disable the button after a wrong guess
-          }
-        });
+          });
+          
+          
+          
         buttonsContainer.appendChild(button);
-      }
     }
-    
+    showPlayAgainButton();
+
+  }
+  
+  
     function showPlayAgainButton() {
       const playAgainButton = document.createElement('button');
       const playAgain = document.querySelector('.play-again');

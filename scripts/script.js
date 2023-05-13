@@ -117,7 +117,7 @@ const fetchingData = async () => {
         buttonsContainer.querySelectorAll('button').forEach(button => {
           button.disabled = true;
         });
-        showPlayAgainButton();
+      
         drawHangman(8); // Draw complete hangman
       } else {
         drawHangman(10 - remainingRights); // Draw corresponding hangman part
